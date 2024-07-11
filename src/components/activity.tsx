@@ -1,8 +1,8 @@
-import { Text, View } from "react-native"
-import { CircleDashed, CircleCheck } from "lucide-react-native"
+import { CircleCheck, CircleDashed } from 'lucide-react-native'
+import clsx from 'clsx'
+import { Text, View } from 'react-native'
 
-import { colors } from "@/styles/colors"
-import clsx from "clsx"
+import { colors } from '@/styles/colors'
 
 export type ActivityProps = {
   id: string
@@ -19,8 +19,8 @@ export function Activity({ data }: Props) {
   return (
     <View
       className={clsx(
-        "w-full bg-zinc-900 px-4 py-3 rounded-lg flex-row items-center border border-zinc-800 gap-3",
-        { "opacity-50": data.isBefore }
+        'w-full bg-zinc-900 px-4 py-3 rounded-lg flex-row items-center border border-zinc-800 gap-3',
+        { 'opacity-50': data.isBefore },
       )}
     >
       {data.isBefore ? (

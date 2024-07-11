@@ -1,7 +1,8 @@
-import { colors } from "@/styles/colors"
-import { Link2 } from "lucide-react-native"
-import { Text, TouchableOpacity, View } from "react-native"
-import * as Linking from "expo-linking"
+import { Link2 } from 'lucide-react-native'
+import { Text, TouchableOpacity, View } from 'react-native'
+import * as Linking from 'expo-linking'
+
+import { colors } from '@/styles/colors'
 
 export type TripLinkProps = {
   id: string

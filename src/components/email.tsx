@@ -1,7 +1,7 @@
-import { Text, TouchableOpacity, View } from "react-native"
-import { X } from "lucide-react-native"
+import { Text, TouchableOpacity, View } from 'react-native'
+import { X } from 'lucide-react-native'
 
-import { colors } from "@/styles/colors"
+import { colors } from '@/styles/colors'
 
 type Props = {
   email: string

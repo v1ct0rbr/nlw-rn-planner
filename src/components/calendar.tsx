@@ -1,15 +1,15 @@
 import {
-  Calendar as RNCalendar,
   CalendarProps,
   LocaleConfig,
-} from "react-native-calendars"
-import { ptBR } from "@/utils/localeCalendarConfig"
+  Calendar as RNCalendar,
+} from 'react-native-calendars'
 
-LocaleConfig.locales["pt-br"] = ptBR
-LocaleConfig.defaultLocale = "pt-br"
+import { ptBR } from '@/utils/localeCalendarConfig'
+import { colors } from '@/styles/colors'
+import { fontFamily } from '@/styles/fontFamily'
 
-import { colors } from "@/styles/colors"
-import { fontFamily } from "@/styles/fontFamily"
+LocaleConfig.locales['pt-br'] = ptBR
+LocaleConfig.defaultLocale = 'pt-br'
 
 export function Calendar({ ...rest }: CalendarProps) {
   return (
@@ -17,8 +17,8 @@ export function Calendar({ ...rest }: CalendarProps) {
       hideExtraDays
       style={{
         borderRadius: 12,
-        overflow: "hidden",
-        backgroundColor: "transparent",
+        overflow: 'hidden',
+        backgroundColor: 'transparent',
       }}
       theme={{
         textMonthFontSize: 18,
@@ -30,7 +30,7 @@ export function Calendar({ ...rest }: CalendarProps) {
         agendaDayNumColor: colors.zinc[200],
         todayTextColor: colors.lime[300],
         textDisabledColor: colors.zinc[500],
-        calendarBackground: "transparent",
+        calendarBackground: 'transparent',
         textDayStyle: { color: colors.zinc[200] },
       }}
       {...rest}

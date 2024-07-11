@@ -1,15 +1,15 @@
-import { X } from "lucide-react-native"
+import { X } from 'lucide-react-native'
 import {
-  View,
-  Text,
   ModalProps,
-  ScrollView,
   Modal as RNModal,
+  ScrollView,
+  Text,
   TouchableOpacity,
-} from "react-native"
-import { BlurView } from "expo-blur"
+  View,
+} from 'react-native'
+import { BlurView } from 'expo-blur'
 
-import { colors } from "@/styles/colors"
+import { colors } from '@/styles/colors'
 
 type Props = ModalProps & {
   title: string
@@ -19,7 +19,7 @@ type Props = ModalProps & {
 
 export function Modal({
   title,
-  subtitle = "",
+  subtitle = '',
   onClose,
   children,
   ...rest
