@@ -50,10 +50,11 @@ export default function Index() {
         type: 'error',
       })
     } else if (destination.length < 4) {
-      return Alert.alert(
-        'Detalhes da viagem',
-        'Preencha todos os campos para continuar',
-      )
+      return messages.showToast({
+        title: 'Detalhes da viagem',
+        message: 'O destino deve ter no mínimo 4 caracteres',
+        type: 'error',
+      })
     } else if (stepForm === StepForm.TRIP_DETAILS) {
       return setStepForm(StepForm.ADD_EMAIL)
     }
@@ -93,6 +94,8 @@ export default function Index() {
           <Input.Field
             placeholder="Para onde?"
             editable={stepForm === StepForm.TRIP_DETAILS}
+            onChangeText={setDestination}
+            value={destination}
           />
         </Input>
 
