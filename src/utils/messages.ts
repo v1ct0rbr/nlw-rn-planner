@@ -1,4 +1,5 @@
 // Foo.jsx
+import { StyleSheet } from 'react-native'
 import Toast from 'react-native-toast-message'
 
 type ToastType = 'success' | 'error' | 'info'
@@ -14,7 +15,18 @@ const showToast = ({ type, title, message }: ToastProps) => {
     type,
     text1: title,
     text2: message,
+    props: {
+      styles: {
+        ...styles.toastStyle,
+      },
+    },
   })
 }
+
+const styles = StyleSheet.create({
+  toastStyle: {
+    zIndex: 100000000, // Alterar o zIndex aqui
+  },
+})
 
 export const messages = { showToast }

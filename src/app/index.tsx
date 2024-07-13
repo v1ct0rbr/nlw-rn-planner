@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import { router } from 'expo-router'
 import {
   ArrowRight,
   AtSign,
@@ -7,15 +8,19 @@ import {
   Settings2,
   UserRoundPlus,
 } from 'lucide-react-native'
-import { useState } from 'react'
-import { Image, Keyboard, Text, View } from 'react-native'
+import { useEffect, useState } from 'react'
+import { Alert, Image, Keyboard, Text, View } from 'react-native'
 import { DateData } from 'react-native-calendars'
+import Toast from 'react-native-toast-message'
 
 import { Button } from '@/components/button'
 import { Calendar } from '@/components/calendar'
 import { GuestEmail } from '@/components/email'
 import { Input } from '@/components/input'
+import { Loading } from '@/components/Loading'
 import { Modal } from '@/components/modal'
+import { tripServer } from '@/server/trip-server'
+import { tripStorage } from '@/storage/trip'
 import { colors } from '@/styles/colors'
 import { DatesSelected, calendarUtils } from '@/utils/calendarUtils'
 import { messages } from '@/utils/messages'
@@ -32,6 +37,9 @@ enum MODAL {
 }
 
 export default function Index() {
+  const [isCreatingTrip, setIsCreatingTrip] = useState(false)
+  const [isGettingTrip, setIsGettingTrip] = useState(true)
+
   const [stepForm, setStepForm] = useState(StepForm.TRIP_DETAILS)
 
   const [showModal, setShowModal] = useState(MODAL.NONE)
@@ -65,6 +73,17 @@ export default function Index() {
     } else if (stepForm === StepForm.TRIP_DETAILS) {
       return setStepForm(StepForm.ADD_EMAIL)
     }
+
+    Alert.alert('Nova viagem', 'Deseja salvar a viagem?', [
+      {
+        text: 'Cancelar',
+        style: 'cancel',
+      },
+      {
+        text: 'Salvar',
+        onPress: () => createTrip(),
+      },
+    ])
   }
 
   function handleSelectedDates(selectedDay: DateData) {
@@ -112,6 +131,78 @@ export default function Index() {
 
     setEmailsToInvite((prevState) => [...prevState, emailToInvite])
     setEmailToInvite('')
+  }
+
+  async function saveTrip(tripId: string) {
+    // Salva a viagem no banco
+
+    try {
+      await tripStorage.save(tripId)
+      router.navigate(`/trip/${tripId}`)
+    } catch (error) {
+      // Exibe mensagem de erro
+      messages.showToast({
+        title: 'Erro ao salvar viagem',
+        message: 'Não foi possível salvar a viagem, tente novamente',
+        type: 'error',
+      })
+    }
+  }
+
+  async function createTrip() {
+    try {
+      setIsCreatingTrip(true)
+      const newTrip = await tripServer.create({
+        destination,
+        starts_at: dayjs(selectedDates.startsAt?.dateString).toString(),
+        ends_at: dayjs(selectedDates.endsAt?.dateString).toString(),
+        emails_to_invite: emailsToInvite,
+      })
+
+      messages.showToast({
+        title: 'Nova viagem',
+        message: 'Viagem criada com sucesso',
+        type: 'success',
+      })
+      saveTrip(newTrip.tripId)
+    } catch (e) {
+      messages.showToast({
+        title: 'Nova viagem',
+        message: `Erro ao criar viagem: ${e}`,
+        type: 'error',
+      })
+      setIsCreatingTrip(false)
+    }
+  }
+
+  async function getTrip() {
+    try {
+      setIsGettingTrip(true)
+      const tripId = await tripStorage.get()
+      if (!tripId) {
+        return setIsGettingTrip(false)
+      }
+      const trip = await tripServer.getById(tripId)
+      if (trip) {
+        return router.navigate(`/trip/${tripId}`)
+      }
+    } catch (error) {
+      messages.showToast({
+        title: 'Erro ao buscar viagem',
+        message: 'Não foi possível buscar a viagem, tente novamente',
+        type: 'error',
+      })
+    } finally {
+      setIsGettingTrip(false)
+    }
+  }
+
+  useEffect(() => {
+    getTrip()
+  }, [])
+
+  if (isGettingTrip) {
+    return <Loading />
   }
 
   return (
@@ -187,7 +278,7 @@ export default function Index() {
           </>
         )}
 
-        <Button onPress={handleNextStepForm}>
+        <Button onPress={handleNextStepForm} isLoading={isCreatingTrip}>
           <Button.Title>
             {stepForm === StepForm.TRIP_DETAILS
               ? 'Continuar'
@@ -227,6 +318,7 @@ export default function Index() {
         visible={showModal === MODAL.GUESTS}
         onClose={() => setShowModal(MODAL.NONE)}
       >
+        <Toast />
         <View className="my-2 flex-wrap gap-2 border-b border-zinc-800 py-5 items-start">
           {emailsToInvite.length > 0 ? (
             emailsToInvite.map((email) => (
